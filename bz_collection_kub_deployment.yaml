@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+  name: bz-dispatcher
+  labels:
+    app: bz-dispatcher
+spec:
+  ports:
+    - port: 8016
+      targetPort: 8016
+      nodePort: 30013
+      name: metrics
+  selector:
+    app: bz-dispatcher
+    tier: bz-collection
+  type: NodePort
+
+---
+apiVersion: apps/v1  #extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bz-dispatcher
+  labels:
+    app: bz-dispatcher
+spec:
+  selector:
+    matchLabels:
+      app: bz-dispatcher
+      tier: bz-collection
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: bz-dispatcher
+        tier: bz-collection
+    spec:
+      containers:
+      # - image: 192.168.70.111:30400/bz_colection_service:latest
+      # - image: buzzdiggrdemos.azurecr.io/bz_colection_service
+      - image: $BZ_IMAGE_NAME
+        name: bz-dispatcher
+        # command: [ "/bin/bash", "run_dispatcher_service.sh"]
+        command: ["python", "/app/MainService/BZDispacherService/BZDispatcher.py"]
+        envFrom:
+        - configMapRef:
+            name: bz-base-service-configmap
+        # - configMapRef:
+        #     name: bz-base-service-configmap2
+        - configMapRef:
+            name: bz-collection-service-configmap
+        env:
+        # - name: BZ_REDIS_HOST
+        #   value: bz-redis-master
+        # - name: BZ_REDIS_PASS
+        #   value: 27rAqbNz55
+        - name: isRunIN_KUBS_POD
+          value: 'true'
+        - name: BZ_IMAGE_NAME
+          value: $BZ_IMAGE_NAME
+        ports:
+        - containerPort: 8016
+          name: bz-dispa-https
+        volumeMounts:
+        - name: bz-dispatcher-service-persistent-storage
+          mountPath: /bz-dispatcher 
+      imagePullSecrets:
+       - name: bz-aks-acr-secret2
+      hostAliases:
+       - ip: 10.34.1.6
+         hostnames:
+         - data-node1
+       - ip: 10.35.1.5
+         hostnames:
+         - data-node2
+       - ip: 10.36.1.5
+         hostnames:
+         - data-node3
+      volumes:
+      - name: bz-dispatcher-service-persistent-storage
+        azureFile:
+          secretName: azure-bz-dispatcher
+          shareName: bz-dispatcher
+          readOnly: false

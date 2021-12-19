@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: tarasol-administration
+  name: tarasol-administration
+  namespace: dev
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: tarasol-administration
+  template:
+    metadata:
+      labels:
+        app: tarasol-administration
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: tarasol-administration-configmap
+        image: docker-registery.in3.cloud:5000/tarasol-administration:v3.2.3
+        imagePullPolicy: Always
+        name: tarasol-administration
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /app/dist/profiler-results
+          name: profiler-results
+      nodeSelector:
+        beta.kubernetes.io/arch: amd46
+      volumes:
+        - name: profiler-results
+          hostPath:
+          # directory location on host
+            path: /media/ext/profiler
+          # this field is optional
+            type: Directory 
+
+

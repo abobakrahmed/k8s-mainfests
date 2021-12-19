@@ -1,0 +1,84 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "34"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"deployment.kubernetes.io/revision":"10"},"creationTimestamp":"2021-04-25T15:09:54Z","generation":10,"labels":{"app":"tarasol-notifications"},"managedFields":[{"apiVersion":"apps/v1","fieldsType":"FieldsV1","fieldsV1":{"f:metadata":{"f:annotations":{".":{},"f:kubectl.kubernetes.io/last-applied-configuration":{}},"f:labels":{".":{},"f:app":{}}},"f:spec":{"f:progressDeadlineSeconds":{},"f:replicas":{},"f:revisionHistoryLimit":{},"f:selector":{"f:matchLabels":{".":{},"f:app":{}}},"f:strategy":{"f:rollingUpdate":{".":{},"f:maxSurge":{},"f:maxUnavailable":{}},"f:type":{}},"f:template":{"f:metadata":{"f:labels":{".":{},"f:app":{}}},"f:spec":{"f:containers":{"k:{\"name\":\"tarasol-notifications\"}":{".":{},"f:envFrom":{},"f:imagePullPolicy":{},"f:name":{},"f:ports":{".":{},"k:{\"containerPort\":80,\"protocol\":\"TCP\"}":{".":{},"f:containerPort":{},"f:protocol":{}}},"f:resources":{},"f:terminationMessagePath":{},"f:terminationMessagePolicy":{}}},"f:dnsPolicy":{},"f:restartPolicy":{},"f:schedulerName":{},"f:securityContext":{},"f:terminationGracePeriodSeconds":{}}}}},"manager":"kubectl-client-side-apply","operation":"Update","time":"2021-04-25T15:09:54Z"},{"apiVersion":"apps/v1","fieldsType":"FieldsV1","fieldsV1":{"f:spec":{"f:template":{"f:spec":{"f:containers":{"k:{\"name\":\"tarasol-notifications\"}":{"f:image":{}}}}}}},"manager":"kubectl-set","operation":"Update","time":"2021-04-25T15:10:16Z"},{"apiVersion":"apps/v1","fieldsType":"FieldsV1","fieldsV1":{"f:metadata":{"f:annotations":{"f:deployment.kubernetes.io/revision":{}}},"f:status":{"f:availableReplicas":{},"f:conditions":{".":{},"k:{\"type\":\"Available\"}":{".":{},"f:lastTransitionTime":{},"f:lastUpdateTime":{},"f:message":{},"f:reason":{},"f:status":{},"f:type":{}},"k:{\"type\":\"Progressing\"}":{".":{},"f:lastTransitionTime":{},"f:lastUpdateTime":{},"f:message":{},"f:reason":{},"f:status":{},"f:type":{}}},"f:observedGeneration":{},"f:readyReplicas":{},"f:replicas":{},"f:updatedReplicas":{}}},"manager":"kube-controller-manager","operation":"Update","time":"2021-06-21T08:49:17Z"}],"name":"tarasol-notifications","namespace":"dev","resourceVersion":"26816659","selfLink":"/apis/apps/v1/namespaces/dev/deployments/tarasol-notifications","uid":"34412534-3986-4ebf-a5ed-51b73d6a252a"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"tarasol-notifications"}},"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":1},"type":"RollingUpdate"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"tarasol-notifications"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"tarasol-notifications-configmap"}}],"image":"docker-registery.in3.cloud:5000/tarasol-notifications:dev-74dffa9f1","imagePullPolicy":"Always","name":"tarasol-notifications","ports":[{"containerPort":80,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File"}],"dnsPolicy":"ClusterFirst","restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30}}},"status":{"availableReplicas":1,"conditions":[{"lastTransitionTime":"2021-04-25T15:09:54Z","lastUpdateTime":"2021-04-25T15:09:54Z","message":"Deployment has minimum availability.","reason":"MinimumReplicasAvailable","status":"True","type":"Available"},{"lastTransitionTime":"2021-04-25T15:09:54Z","lastUpdateTime":"2021-06-21T08:49:17Z","message":"ReplicaSet \"tarasol-notifications-5648bdb6dc\" has successfully progressed.","reason":"NewReplicaSetAvailable","status":"True","type":"Progressing"}],"observedGeneration":10,"readyReplicas":1,"replicas":1,"updatedReplicas":1}}
+  creationTimestamp: "2021-06-25T18:35:13Z"
+  generation: 38
+labels:
+    app: tarasol-notifications
+  name: tarasol-notifications
+  namespace: dev
+  resourceVersion: "21216818"
+  uid: 3d37070a-3e39-4978-a1c3-fad8b35836a9
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: tarasol-notifications
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2021-11-16T22:38:13Z"
+      creationTimestamp: null
+      labels:
+        app: tarasol-notifications
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: tarasol-notifications-configmap
+        image: docker-registery.in3.cloud:5000/tarasol-notifications:v3.3.6
+        imagePullPolicy: Always
+        name: tarasol-notifications
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+name: tarasol-notifications
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  conditions:
+  - lastTransitionTime: "2021-07-06T10:50:49Z"
+    lastUpdateTime: "2021-07-06T10:50:49Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2021-06-28T20:39:57Z"
+    lastUpdateTime: "2021-11-16T23:11:03Z"
+    message: ReplicaSet "tarasol-notifications-b8d9554b5" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 38
+  replicas: 1
+  unavailableReplicas: 1
+  updatedReplicas: 1

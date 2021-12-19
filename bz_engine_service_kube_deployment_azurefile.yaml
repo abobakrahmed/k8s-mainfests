@@ -1,0 +1,144 @@
+# kind: PersistentVolume
+# apiVersion: v1
+# metadata:
+#   name: bz-engine-pv
+#   labels:
+#     type: local
+#     app: bz-engine-service
+#     tier: backend-ml
+#     release: stable
+# spec:
+#   capacity:
+#     storage: 4Gi
+#   storageClassName: default
+#   accessModes:
+#     - ReadWriteOnce
+#   hostPath:
+#     path: "/bz/in3ml/"
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: bz-engine-pv-claim
+#   labels:
+#     type: local
+#     app: bz-engine-service
+#     tier: backend-ml
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 4Gi
+#   storageClassName: default
+#   selector: 
+#     matchLabels:
+#       type: local
+#       app: bz-engine-service
+#       release: stable
+#       tier: backend-ml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bz-engine-service
+  labels:
+    app: bz-engine-service
+    tier: backend-ml
+spec:
+  ports:
+    - port: 5010
+      targetPort: bz-ml-ser-http
+  selector:
+    app: bz-engine-service
+    tier: backend-ml
+  # clusterIP: None
+  type: NodePort
+  # type: LoadBalancer
+# ---
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: bz-engine-service
+  labels:
+    app: bz-engine-service
+    tier: backend-ml
+spec:
+  # number of instance
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bz-engine-service
+      tier: backend-ml
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: bz-engine-service
+        tier: backend-ml
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node.kubernetes.io/instance-type
+                    operator: In
+                    values:
+                      - Standard_NC4as_T4_v3
+      tolerations:
+      # Allow this pod to be rescheduled while the node is in "critical add-ons only" mode.
+      # This, along with the annotation above marks this pod as a critical add-on.
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      - key: "sku"
+        operator: "Equal"
+        value: "gpu"
+        effect: "NoSchedule"
+      containers:
+      # - name: bz-madamira
+      #   image: 192.168.70.111:30400/bz_madamira:1.0.0.0
+      - name: bz-engine-service
+        # image: 192.168.70.111:30400/bz_engine_service_ml:1.0.0.1
+        # image: in3buzzcr.azurecr.io/bz_engine_service_ml:1.0.0.19
+        image: $BZ_IMAGE_NAME
+        command: [ "/bin/bash", "run_bz_nlp_service.sh"]
+        # command: [ "/bin/bash", "-c", "--" ]
+        # args: [ "while true; do sleep 30; done;" ]
+        resources:
+          nvidia.com/gpu: 1
+
+        envFrom:
+        - configMapRef:
+            name: bz-base-service-configmap
+        - configMapRef:
+            name: bz-engine-service-configmap
+        ports:
+        - containerPort: 5010
+          name: bz-ml-ser-http
+        volumeMounts:
+        - name: bz-engine-service-persistent-storage
+          mountPath: /bz
+      imagePullSecrets:
+        - name: bz-aks-acr-secret2
+      hostAliases:
+       - ip: 10.34.1.6
+         hostnames:
+         - data-node1
+       - ip: 10.35.1.5
+         hostnames:
+         - data-node2
+       - ip: 10.36.1.5
+         hostnames:
+         - data-node3
+      volumes:
+      - name: bz-engine-service-persistent-storage
+        azureFile:
+          secretName: azure-ml-file-secret
+          shareName: bz-ml-data-single
+          readOnly: false

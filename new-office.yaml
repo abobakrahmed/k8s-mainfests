@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: tarasol-officetempo
+  name: tarasol-officetempo
+  namespace: dev
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: tarasol-officetempo
+  template:
+    metadata:
+      labels:
+        app: tarasol-officetempo
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: tarasol-officetempo-configmap
+        image: docker-registery.in3.cloud:5000/tarasol-officetempo:v3.3.0
+        imagePullPolicy: Always
+        name: tarasol-officetempo
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /app/dist/profiler-results
+          name: profiler-results
+      nodeSelector:
+        beta.kubernetes.io/arch: amd46
+      volumes:
+      - name: profiler-results
+        hostPath:
+        # directory location on host
+          path: /media/ext/profiler
+        # this field is optional
+          type: Directory 

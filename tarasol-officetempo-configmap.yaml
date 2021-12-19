@@ -1,0 +1,24 @@
+apiVersion: v1
+data:
+  ADMIN_API: http://tarasol-administration/api/v1
+  APM_PORT: "8200"
+  APM_URL: http://apm-server-apm-server.mon.svc.cluster.local
+  MEDIA_API: http://tarasol-media/api/v1
+  PORT: "80"
+  REDIS_HOST: 200.100.100.114
+  REDIS_PORT: "6379"
+  SUGGESTION_USER_COMMENT_LIMIT: "30"
+  TARASOL_ADMIN_MQ: amqp://200.100.100.114:5672/tarasol
+  TARASOL_AUTH_API: http://tarasol-authentication
+  TARASOL_CORRESPONDENCES_API: http://tarasol-correspondences
+  TARASOL_CRYPTOGRAPHY_KY: CMS2015
+  TARASOL_EVENTBUS_API: http://tarasol-eventbus/api/v1
+  TARASOL_TENANT_API: http://tarasol-multitenancy
+  BI_URL: http://tarasol-bi
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-06-25T18:35:23Z"
+  name: tarasol-officetempo-configmap
+  namespace: dev
+  resourceVersion: "14216409"
+  uid: 5987c9f5-677f-4df8-9d42-c03aab13f05e
